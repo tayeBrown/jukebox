@@ -1,0 +1,7 @@
+{
+    "CLIENT_ID": "ac83e0e6e6c84c70a9c3c1c6ce98e5be",
+    "CLIENT_SECRET": "76b06fff2f6549d587ab671f932ccfee",
+    "USERNAME": "Serenity",
+    "SCOPE": "user-read-currently-playing",
+    "REDIRECT": "http://localhost:2121"
+}
