@@ -1,4 +1,4 @@
-# jukebox
+# Jukebox
 
 ## Introduction
 The code for an in progress jukebox that runs on a Raspberry Pi and uses Spotify to get and change tracks...hopefully. 
