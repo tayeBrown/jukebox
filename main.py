@@ -125,7 +125,6 @@ class Player:
         items = track_list["items"]
         tracks = []
         for i, t in enumerate(items):
-            print(i)
             track = items[i]["track"]
             track_ids = [track["name"], track["id"]]
             tracks.append(track_ids)
@@ -150,6 +149,18 @@ class Player:
         # Reminder for tomorrow: add_to_queue(uri, device_id=None) is the method I want here.
         # Otherwise, will do pretty much the same as select_song()
         # So will queue() no doubt
+        tracks = self.get_track_list()
+        print("Please select a track: ")
+        for index, i in enumerate(tracks):
+            print(str(index) + ": " + i[0])
+        track_choice = input("Awaiting track input...")
+        if track_choice.isdigit():
+            # Choose the track ID from the [track_name, track_id] sublist inside tracks list
+            t = tracks[int(track_choice)][1]
+            print(t)
+            uri = f"spotify:track:{t}"
+            print(uri)
+            spotify.add_to_queue(uri)
 
     def pause():
         print("IMPLEMENT ME")
@@ -209,5 +220,3 @@ if __name__ == '__main__':
         # Need to implement a menu selection here.
         # select_playlist()
         #player.get_devices()
-        
-        time.sleep(30)
