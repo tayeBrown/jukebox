@@ -4,7 +4,7 @@
 The code for an in progress jukebox that runs on a Raspberry Pi and uses Spotify to get and change tracks...hopefully. 
 
 ## In Progress
-- [] Investigate options for front end
+- [ ] Investigate options for front end
 - [] Investigate more useful user management system
 - [] Change user
 
