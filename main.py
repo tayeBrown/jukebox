@@ -7,7 +7,9 @@ class Player:
 
     def __init__(self):
         # TODO set default playlist here
+        self.active_device_id = None
         self.playlist_id = None
+        self.user_id = None
 
     def create_spotify(self):
         with open("config.json") as config:
@@ -22,10 +24,28 @@ class Player:
 
         spotify = spotipy.Spotify(auth_manager=auth_manager)
         self.playlist_id = data["DEFAULT_PLAYLIST"]
+        self.user_id = data["USER_ID"]
 
         return auth_manager, spotify
+    
+    def get_devices(self):
+        """"
+            Get the ID of a currently active device for the signed in user
+            Returns the device ID
+        """
+        device_list = spotify.devices()
+        print("Getting Devices...")
+        for i in device_list["devices"]:
+            if i["is_active"]:
+                return i["id"]
+
 
     def refresh_spotify(self, auth_manager, spotify):
+        """
+            Checks for an existing auth token
+            If one does not exist, creates a new token
+            Else if the current token is expired, creates a new token
+        """
         token_info = auth_manager.cache_handler.get_cached_token()
         print(token_info)
         if token_info == None:
@@ -37,16 +57,20 @@ class Player:
         return auth_manager, spotify
 
     def select_playlist(self):
-        p_list = self.get_user_playlists()
+        """
+            Selects a playlist to set as the global playlist
+            This playlist is used to select and queue tracks from
+        """
+        p_list = self.get_all_playlists()
         for index, i in enumerate(p_list):
             name = i["name"]
             print(f"{index}, {name}")
         current_playlist_index = input("Please select a number to choose a playlist")
         print("Playlist selected: " + str(p_list[int(current_playlist_index)]["name"]))
-        self.playlist_id = str(p_list[int(current_playlist_index)]["name"])
+        self.playlist_id = str(p_list[int(current_playlist_index)]["id"])
         
 
-    def setup_playlist(self, playlist: int):
+    def setup_playlist(self):
         """
             When passed playlist information, gets all the songs from that playlist
             Displays the songs as a selectable menu
@@ -54,10 +78,33 @@ class Player:
         print("IMPLEMENT ME")
 
     def get_user_playlists(self):
+        """
+            Gets all the playlists associated with a user
+            Returns the list of playlists
+            Currently not used
+        """
         playlists = spotify.current_user_playlists()["items"]
         return playlists
+    
+
+    def get_all_playlists(self):
+        """
+            Gets all the playlists associated with a user
+            This differs from get_user_playlists because it includes the playlists
+            that the user did not make themselves
+        """
+        playlists = spotify.user_playlists(self.user_id)["items"]
+        # for i in playlists:
+        #     print(i["name"] + ": " + i["id"])
+        return playlists
+
 
     def get_current_track(self):
+        """
+            Mostly a test function
+            Checks if a track is playing. If so, prints the name of the track.
+            If not, asks the user to select a track.
+        """
         playing = spotify.currently_playing()
         if playing:
             print(playing["item"]["name"])
@@ -73,10 +120,12 @@ class Player:
             Returns the list
         """
         print("GET TRACK LIST")
+        print(self.playlist_id)
         track_list = spotify.playlist_tracks(self.playlist_id)
         items = track_list["items"]
         tracks = []
         for i, t in enumerate(items):
+            print(i)
             track = items[i]["track"]
             track_ids = [track["name"], track["id"]]
             tracks.append(track_ids)
@@ -156,7 +205,9 @@ if __name__ == '__main__':
         auth_manager, spotify = player.refresh_spotify(auth_manager, spotify)
         menu = Menu()
         menu.menu_builder(player)
-        #player.get_current_track()
+        #player.get_all_playlists()
         # Need to implement a menu selection here.
         # select_playlist()
-        time.sleep(60)
+        #player.get_devices()
+        
+        time.sleep(30)
